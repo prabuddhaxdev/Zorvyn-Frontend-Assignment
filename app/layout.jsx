@@ -18,22 +18,24 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <ClerkProvider>
-      <html lang="en" suppressHydrationWarning>
-        <body
-          className={` ${bricolage_grotesque.className} min-h-full flex flex-col antialiased`}
-        >
+    <html lang="en" suppressHydrationWarning>
+      <body
+        className={` ${bricolage_grotesque.className} min-h-full flex flex-col antialiased`}
+      >
+        <ClerkProvider>
           <ThemeProvider
             attribute="class"
             defaultTheme="system"
             enableSystem
             disableTransitionOnChange
           >
-            <Header />
-            <main className="min-h-screen">{children}</main>
+            <main className="min-h-screen">
+              <Header />
+              {children}
+            </main>
           </ThemeProvider>
-        </body>
-      </html>
-    </ClerkProvider>
+        </ClerkProvider>
+      </body>
+    </html>
   );
 }

@@ -2,17 +2,26 @@ import Link from "next/link";
 
 export const Footer = () => {
   return (
-    <footer className="w-full py-12 px-4 border-t">
-      <div className="max-w-7xl mx-auto flex flex-col items-center justify-center">
+    <footer className="w-full py-12 px-4 border-t border-zinc-200 dark:border-zinc-800">
+      <div className="max-w-7xl mx-auto flex flex-col items-center justify-center gap-4">
+        {/* GitHub Link */}
         <Link
-          href="https://github.com/prabuddhaxdev/Zorvyn-Frontend-Assignment"
+          href="https://github.com/prabuddhaxdev/FinSync"
           target="_blank"
           rel="noopener noreferrer"
+          aria-label="View project on GitHub"
           className="group"
         >
-          <div className="w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 bg-gray-600/40 ring-2 ring-emerald-400/20">
+          <div
+            className="w-12 h-12 rounded-full flex items-center justify-center 
+            transition-all duration-300 
+            bg-zinc-100 dark:bg-zinc-800 
+            ring-1 ring-zinc-300 dark:ring-zinc-700
+            group-hover:scale-110 group-hover:ring-emerald-400/40"
+          >
             <svg
-              className="w-6 h-6 text-emerald-300 transition-colors duration-300"
+              className="w-6 h-6 text-zinc-700 dark:text-zinc-300 
+              group-hover:text-emerald-400 transition-colors duration-300"
               fill="currentColor"
               viewBox="0 0 24 24"
               aria-hidden="true"
@@ -26,8 +35,13 @@ export const Footer = () => {
           </div>
         </Link>
 
-        <p className="mt-4 text-gray-600 text-sm">
-          © {new Date().getFullYear()} FinSync. All rights reserved.
+        {/* Copyright */}
+        <p className="text-sm text-zinc-500 dark:text-zinc-400 text-center">
+          © {new Date().getFullYear()}{" "}
+          <span className="font-medium text-zinc-700 dark:text-zinc-300">
+            FinSync
+          </span>
+          . All rights reserved.
         </p>
       </div>
     </footer>

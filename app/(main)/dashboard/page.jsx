@@ -1,15 +1,13 @@
 import { CreateAccountDrawer } from "@/components/CreateAccountDrawer";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Plus } from "lucide-react";
 import React from "react";
 
 const Dashboard = () => {
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Dashboard</h1>
-
-      <CreateAccountDrawer>
-        <Button variant="success">Create Account</Button>
-      </CreateAccountDrawer>
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <CreateAccountDrawer />
     </div>
   );
 };

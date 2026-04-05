@@ -82,7 +82,7 @@ const LandingPage = () => {
       </section>
 
       {/* CTA */}
-      <section className="py-20 bg-green-600 dark:bg-green-500">
+      <section className="py-20 bg-green-600 dark:bg-green-500 rounded-xl">
         <div className="max-w-7xl mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold text-white mb-4">
             Ready to Take Control of Your Finances?

@@ -3,9 +3,10 @@
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2 } from "lucide-react";
+import { Loader2, Plus } from "lucide-react";
 import useFetch from "@/hooks/use-fetch";
 import { toast } from "sonner";
+
 import { Button } from "@/components/ui/button";
 import {
   Drawer,
@@ -14,7 +15,9 @@ import {
   DrawerTitle,
   DrawerTrigger,
   DrawerClose,
+  DrawerDescription,
 } from "@/components/ui/drawer";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -24,11 +27,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
+
 import { createAccount } from "@/actions/dashboard";
 import { accountSchema } from "@/app/lib/schema";
 
-export function CreateAccountDrawer({ children }) {
+export function CreateAccountDrawer() {
   const [open, setOpen] = useState(false);
+
   const {
     register,
     handleSubmit,
@@ -73,50 +78,45 @@ export function CreateAccountDrawer({ children }) {
 
   return (
     <Drawer open={open} onOpenChange={setOpen}>
-      <DrawerTrigger asChild>{children}</DrawerTrigger>
-      <DrawerContent
-        className="
-flex flex-col
-    max-h-[85vh]
-    lg:max-w-lg
-    lg:mx-auto
-    rounded-t-2xl
-  "
-      >
+      {/* ✅ FIX: Trigger defined internally (no hydration mismatch) */}
+      <DrawerTrigger asChild>
+        <div className="w-full cursor-pointer">
+          <Card className="hover:shadow-md transition-shadow border-dashed">
+            <CardContent className="flex flex-col items-center justify-center text-muted-foreground h-full pt-5">
+              <Plus className="h-10 w-10 mb-2" />
+              <p className="text-sm font-medium">Add New Account</p>
+            </CardContent>
+          </Card>
+        </div>
+      </DrawerTrigger>
+
+      <DrawerContent className="flex flex-col max-h-[85vh] lg:max-w-lg lg:mx-auto rounded-t-2xl">
         <DrawerHeader>
           <DrawerTitle>Create New Account</DrawerTitle>
+          <DrawerDescription>
+            Fill in the details below to create a new account.
+          </DrawerDescription>
         </DrawerHeader>
+
         <div className="flex-1 px-4 pb-4">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            {/* Account Name */}
             <div className="space-y-2">
-              <label
-                htmlFor="name"
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-              >
-                Account Name
-              </label>
-              <Input
-                id="name"
-                placeholder="e.g., Main Checking"
-                {...register("name")}
-              />
+              <label className="text-sm font-medium">Account Name</label>
+              <Input placeholder="e.g., Main Checking" {...register("name")} />
               {errors.name && (
                 <p className="text-sm text-red-500">{errors.name.message}</p>
               )}
             </div>
 
+            {/* Account Type */}
             <div className="space-y-2">
-              <label
-                htmlFor="type"
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-              >
-                Account Type
-              </label>
+              <label className="text-sm font-medium">Account Type</label>
               <Select
                 onValueChange={(value) => setValue("type", value)}
-                defaultValue={watch("type")}
+                value={watch("type")}
               >
-                <SelectTrigger id="type">
+                <SelectTrigger>
                   <SelectValue placeholder="Select type" />
                 </SelectTrigger>
                 <SelectContent>
@@ -129,15 +129,10 @@ flex flex-col
               )}
             </div>
 
+            {/* Balance */}
             <div className="space-y-2">
-              <label
-                htmlFor="balance"
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-              >
-                Initial Balance
-              </label>
+              <label className="text-sm font-medium">Initial Balance</label>
               <Input
-                id="balance"
                 type="number"
                 step="0.01"
                 placeholder="0.00"
@@ -148,40 +143,34 @@ flex flex-col
               )}
             </div>
 
+            {/* Default Switch */}
             <div className="flex items-center justify-between rounded-lg border p-3">
-              <div className="space-y-0.5">
-                <label
-                  htmlFor="isDefault"
-                  className="text-base font-medium cursor-pointer"
-                >
+              <div>
+                <label className="text-base font-medium cursor-pointer">
                   Set as Default
                 </label>
                 <p className="text-sm text-muted-foreground">
-                  This account will be selected by default for transactions
+                  This account will be selected by default
                 </p>
               </div>
               <Switch
-                id="isDefault"
                 checked={watch("isDefault")}
                 onCheckedChange={(checked) => setValue("isDefault", checked)}
-                className="data-[state=checked]:bg-green-500 data-[state=unchecked]:bg-zinc-300 dark:data-[state=unchecked]:bg-zinc-700"
               />
             </div>
 
+            {/* Actions */}
             <div className="flex gap-4 pt-4">
               <DrawerClose asChild>
-                <Button
-                  type="button"
-                  variant="destructive"
-                  className="flex-1 mb-10"
-                >
+                <Button type="button" variant="destructive" className="flex-1">
                   Cancel
                 </Button>
               </DrawerClose>
+
               <Button
                 type="submit"
                 variant="success"
-                className="flex-1 mb-10"
+                className="flex-1"
                 disabled={createAccountLoading}
               >
                 {createAccountLoading ? (

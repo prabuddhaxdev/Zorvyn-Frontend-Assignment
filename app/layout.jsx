@@ -33,7 +33,6 @@ export default function RootLayout({ children }) {
             <Header />
             <main className="min-h-screen">{children}</main>
             <Toaster/>
-            <Footer />
           </ThemeProvider>
         </ClerkProvider>
       </body>

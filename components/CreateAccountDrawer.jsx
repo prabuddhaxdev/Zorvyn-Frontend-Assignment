@@ -78,7 +78,6 @@ export function CreateAccountDrawer() {
 
   return (
     <Drawer open={open} onOpenChange={setOpen}>
-      {/* ✅ FIX: Trigger defined internally (no hydration mismatch) */}
       <DrawerTrigger asChild>
         <div className="w-full cursor-pointer">
           <Card className="hover:shadow-md transition-shadow border-dashed">
@@ -100,33 +99,38 @@ export function CreateAccountDrawer() {
 
         <div className="flex-1 px-4 pb-4">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            {/* Account Name */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Account Name</label>
-              <Input placeholder="e.g., Main Checking" {...register("name")} />
-              {errors.name && (
-                <p className="text-sm text-red-500">{errors.name.message}</p>
-              )}
-            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Account Name */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Account Name</label>
+                <Input
+                  placeholder="e.g., Main Checking"
+                  {...register("name")}
+                />
+                {errors.name && (
+                  <p className="text-sm text-red-500">{errors.name.message}</p>
+                )}
+              </div>
 
-            {/* Account Type */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Account Type</label>
-              <Select
-                onValueChange={(value) => setValue("type", value)}
-                value={watch("type")}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="CURRENT">Current</SelectItem>
-                  <SelectItem value="SAVINGS">Savings</SelectItem>
-                </SelectContent>
-              </Select>
-              {errors.type && (
-                <p className="text-sm text-red-500">{errors.type.message}</p>
-              )}
+              {/* Account Type */}
+              <div className="space-y-2 ml-10">
+                <label className="text-sm font-medium">Account Type</label>
+                <Select
+                  onValueChange={(value) => setValue("type", value)}
+                  value={watch("type")}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="CURRENT">Current</SelectItem>
+                    <SelectItem value="SAVINGS">Savings</SelectItem>
+                  </SelectContent>
+                </Select>
+                {errors.type && (
+                  <p className="text-sm text-red-500">{errors.type.message}</p>
+                )}
+              </div>
             </div>
 
             {/* Balance */}

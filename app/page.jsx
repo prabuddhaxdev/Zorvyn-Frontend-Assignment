@@ -6,6 +6,7 @@ import { features } from "@/data/features";
 import { howItWorksData } from "@/data/howitworks";
 import HeroSection from "@/components/Hero";
 import { stats } from "@/data/stats";
+import Footer from "@/components/Footer";
 
 const LandingPage = () => {
   return (
@@ -103,6 +104,7 @@ const LandingPage = () => {
           </Link>
         </div>
       </section>
+      <Footer />
     </div>
   );
 };

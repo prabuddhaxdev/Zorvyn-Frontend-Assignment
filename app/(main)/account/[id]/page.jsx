@@ -24,7 +24,10 @@ export default async function AccountPage({ params }) {
         <div>
           <h1
             className="text-3xl sm:text-5xl font-bold tracking-tight capitalize 
-            bg-gradient-to-r from-white to-zinc-400 bg-clip-text text-transparent"
+  bg-gradient-to-r 
+  from-zinc-900 to-zinc-500 
+  dark:from-white dark:to-zinc-400 
+  bg-clip-text text-transparent"
           >
             {account.name}
           </h1>

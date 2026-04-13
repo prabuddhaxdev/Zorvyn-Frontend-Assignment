@@ -5,8 +5,10 @@ import { TransactionTable } from "../_components/transaction-table";
 import { notFound } from "next/navigation";
 import { AccountChart } from "../_components/account-chart";
 
+
 export default async function AccountPage({ params }) {
-  const accountData = await getAccountWithTransactions(params.id);
+  const { id } = await params;
+  const accountData = await getAccountWithTransactions(id);
 
   if (!accountData) {
     notFound();
@@ -22,7 +24,8 @@ export default async function AccountPage({ params }) {
         <div>
           <h1
             className="text-3xl sm:text-5xl font-bold tracking-tight capitalize 
-            bg-gradient-to-r from-green-400 to-green-600 bg-clip-text text-transparent">
+            bg-gradient-to-r from-white to-zinc-400 bg-clip-text text-transparent"
+          >
             {account.name}
           </h1>
 

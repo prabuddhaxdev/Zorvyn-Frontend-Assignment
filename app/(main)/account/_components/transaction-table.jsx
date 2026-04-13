@@ -75,7 +75,7 @@ export function TransactionTable({ transactions }) {
     bulkDeleteTransactions,
   );
 
-  // ✅ Filtering + Sorting
+
   const filtered = useMemo(() => {
     let result = [...transactions];
 

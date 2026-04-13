@@ -11,9 +11,9 @@ export default async function Dashboard() {
 
   const defaultAccount = accounts?.find((account) => account.isDefault);
   return (
-    <div>
+    <div className="space-y-8">
       {/* Accounts Grid */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 ">
         <CreateAccountDrawer />
         {accounts.length > 0 &&
           accounts?.map((account) => (

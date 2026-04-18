@@ -1,0 +1,20 @@
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=
+CLERK_SECRET_KEY=
+NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
+NEXT_PUBLIC_CLERK_SIGN_IN_FORCE_REDIRECT_URL=/dashboard
+NEXT_PUBLIC_CLERK_SIGN_UP_FORCE_REDIRECT_URL=/dashboard
+
+ARCJET_KEY=
+ARCJET_ENV=production
+
+
+# Connect to Supabase via connection pooling
+DATABASE_URL=""
+
+or
+
+DIRECT_URL="" #only needed if you use supabase otherwise any other postgres use DATABASE_URL
+
+GEMINI_API_KEY=
+
+RESEND_API_KEY=

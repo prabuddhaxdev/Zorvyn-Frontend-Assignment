@@ -12,6 +12,7 @@ import {
   ChevronRight,
   RefreshCw,
   Clock,
+  Download,
 } from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "sonner";
@@ -48,6 +49,9 @@ import { BarLoader } from "react-spinners";
 import { useRouter } from "next/navigation";
 import { bulkDeleteTransactions } from "@/actions/account";
 import { categoryColors } from "@/data/categories";
+import jsPDF from "jspdf";
+import * as XLSX from "xlsx";
+import autoTable from "jspdf-autotable";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -110,6 +114,9 @@ export function TransactionTable({ transactions }) {
     return result;
   }, [transactions, searchTerm, typeFilter, recurringFilter, sortConfig]);
 
+  const selectedTransactions = useMemo(() => {
+    return transactions.filter((t) => selectedIds.includes(t.id));
+  }, [selectedIds, transactions]);
   // ✅ Pagination
   const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
 
@@ -117,6 +124,11 @@ export function TransactionTable({ transactions }) {
     const start = (currentPage - 1) * ITEMS_PER_PAGE;
     return filtered.slice(start, start + ITEMS_PER_PAGE);
   }, [filtered, currentPage]);
+
+  const hexToRgb = (hex) => {
+    const bigint = parseInt(hex.replace("#", ""), 16);
+    return [(bigint >> 16) & 255, (bigint >> 8) & 255, bigint & 255];
+  };
 
   // ✅ Handlers
   const handleSort = (field) => {
@@ -167,6 +179,124 @@ export function TransactionTable({ transactions }) {
     setCurrentPage(1);
   };
 
+  const downloadXLS = () => {
+    const data = selectedTransactions.map((t) => ({
+      Date: format(new Date(t.date), "yyyy-MM-dd"),
+      Description: t.description,
+      Category: t.category,
+      Amount: t.amount,
+      Type: t.type,
+      Recurring: t.isRecurring ? "Yes" : "No",
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(data);
+    const workbook = XLSX.utils.book_new();
+
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Transactions");
+
+    XLSX.writeFile(workbook, "transactions.xlsx");
+
+    toast.success("Excel downloaded");
+  };
+
+  const downloadCSV = () => {
+    const headers = [
+      "Date",
+      "Description",
+      "Category",
+      "Amount",
+      "Type",
+      "Recurring",
+    ];
+
+    const rows = selectedTransactions.map((t) => [
+      format(new Date(t.date), "yyyy-MM-dd"),
+      t.description,
+      t.category,
+      t.amount,
+      t.type,
+      t.isRecurring ? "Yes" : "No",
+    ]);
+
+    const csv =
+      "data:text/csv;charset=utf-8," +
+      [headers, ...rows].map((row) => row.join(",")).join("\n");
+
+    const link = document.createElement("a");
+    link.href = encodeURI(csv);
+    link.download = "transactions.csv";
+    link.click();
+
+    toast.success("CSV downloaded");
+  };
+
+const downloadPDF = () => {
+  const doc = new jsPDF();
+
+  const tableData = selectedTransactions.map((t) => [
+    format(new Date(t.date), "PP"),
+    t.description,
+    t.category,
+    t.type === "EXPENSE" ? `-$${t.amount}` : `+$${t.amount}`,
+    t.isRecurring ? "Yes" : "No",
+  ]);
+
+  autoTable(doc, {
+    head: [["Date", "Description", "Category", "Amount", "Recurring"]],
+    body: tableData,
+
+    startY: 20,
+
+    styles: {
+      fontSize: 10,
+      cellPadding: 3,
+    },
+
+    headStyles: {
+      fillColor: [22, 163, 74], // green header
+      textColor: 255,
+    },
+
+    didParseCell: (data) => {
+      const row = selectedTransactions[data.row.index];
+
+      // 🎨 Category color
+      if (data.column.index === 2) {
+        const hex = categoryColors[row.category];
+
+        if (hex) {
+          const rgb = hexToRgb(hex);
+          data.cell.styles.fillColor = rgb;
+          data.cell.styles.textColor = 255;
+        }
+      }
+
+      // 🔴🟢 Amount color
+      if (data.column.index === 3) {
+        if (row.type === "EXPENSE") {
+          data.cell.styles.textColor = [239, 68, 68]; // red
+        } else {
+          data.cell.styles.textColor = [34, 197, 94]; // green
+        }
+      }
+    },
+  });
+
+  doc.save("transactions.pdf");
+  toast.success("Styled PDF downloaded");
+};
+
+  const handleDownload = (type) => {
+    if (!selectedTransactions.length) {
+      toast.error("No transactions selected");
+      return;
+    }
+
+    if (type === "csv") downloadCSV();
+    if (type === "pdf") downloadPDF();
+      if (type === "xls") downloadXLS();
+  };
+
   return (
     <div className="space-y-4">
       {deleteLoading && <BarLoader width={"100%"} color="#16a34a" />}
@@ -174,7 +304,7 @@ export function TransactionTable({ transactions }) {
       {/* Filters */}
       <div className="flex flex-col md:flex-row gap-3">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Search..."
             className="pl-9"
@@ -205,13 +335,28 @@ export function TransactionTable({ transactions }) {
           </Select>
 
           {selectedIds.length > 0 && (
-            <Button
-              size="sm"
-              className="bg-red-500 hover:bg-red-600 text-white"
-              onClick={handleBulkDelete}
-            >
-              <Trash className="h-4 w-4 mr-1" />({selectedIds.length})
-            </Button>
+            <>
+              <Button
+                size="sm"
+                className="bg-red-500 hover:bg-red-600 text-white"
+                onClick={handleBulkDelete}
+              >
+                <Trash className="h-4 w-4 mr-1" />({selectedIds.length})
+              </Button>
+
+              <Select onValueChange={handleDownload}>
+                <SelectTrigger className="w-[160px] flex items-center gap-2">
+                  <Download className="h-4 w-4" />
+                  <SelectValue placeholder="Download" />
+                </SelectTrigger>
+
+                <SelectContent>
+                  <SelectItem value="csv">Download CSV</SelectItem>
+                  <SelectItem value="pdf">Download PDF</SelectItem>
+                  <SelectItem value="xls">Download Excel</SelectItem>
+                </SelectContent>
+              </Select>
+            </>
           )}
 
           {(searchTerm || typeFilter || recurringFilter) && (

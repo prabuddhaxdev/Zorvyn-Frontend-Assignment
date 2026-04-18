@@ -136,12 +136,12 @@ export function CreateAccountDrawer({
 
             <div className="flex gap-3">
               <DrawerClose asChild>
-                <Button variant="outline" className="flex-1">
+                <Button variant="destructive" className="flex-1">
                   Cancel
                 </Button>
               </DrawerClose>
 
-              <Button type="submit" className="flex-1" disabled={loading}>
+              <Button type="submit" variant="success" className="flex-1" disabled={loading}>
                 {loading ? (
                   <>
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />

@@ -1,5 +1,3 @@
-"use server";
-
 import { db } from "@/lib/prisma";
 import { subDays } from "date-fns";
 
